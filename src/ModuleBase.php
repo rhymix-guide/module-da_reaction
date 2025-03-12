@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Rhymix\Modules\Da_reaction\Src;
 
-use ModuleHandler;
-use Rhymix\Modules\Da_reaction\Src\Models\ReactionContainer;
-use Rhymix\Modules\Da_reaction\Src\Models\ReactionModel;
+use Rhymix\Modules\Da_reaction\Src\Models\ReactionConfig;
+use Rhymix\Modules\Da_reaction\Src\Models\ReactionPartConfig;
 
 /**
  * 모듈의 액션을 처리하는 클래스
@@ -24,6 +23,14 @@ class ModuleBase extends \ModuleObject
     public static string $tableReaction = 'da_reaction';
     public static string $tableReactionChoose = 'da_reaction_choose';
 
+    /** @var ReactionConfig */
+    protected static ReactionConfig $config;
+    /** @var array<int,ReactionPartConfig> */
+    protected static array $partConfigInstances = [];
+
+    /**
+     * @return array<string,mixed>
+     */
     public static function loadCustomConfig(): array
     {
         $customData = [];
@@ -42,5 +49,23 @@ class ModuleBase extends \ModuleObject
         }
 
         return $customData;
+    }
+
+    public static function getConfig(): ReactionConfig
+    {
+        if (!isset(static::$config)) {
+            static::$config = new ReactionConfig();
+        }
+
+        return static::$config;
+    }
+
+    public static function getPartConfig(int $moduleSrl): ReactionPartConfig
+    {
+        if (!isset(static::$partConfigInstances[$moduleSrl])) {
+            static::$partConfigInstances[$moduleSrl] = new ReactionPartConfig(static::getConfig(), $moduleSrl);
+        }
+
+        return static::$partConfigInstances[$moduleSrl];
     }
 }

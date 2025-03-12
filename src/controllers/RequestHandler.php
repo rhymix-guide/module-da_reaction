@@ -8,6 +8,7 @@ use Rhymix\Framework\Exception;
 use Rhymix\Framework\Session;
 use Rhymix\Modules\Da_reaction\Src\Models\ReactionModel;
 use Rhymix\Modules\Da_reaction\Src\ModuleBase;
+use Rhymix\Modules\Da_reaction\Src\ReactionHelper;
 
 /**
  * 라이믹스 요청 핸들러
@@ -24,10 +25,14 @@ class RequestHandler extends ModuleBase
         $targetId = Context::get('targetId');
         $parentId = Context::get('parentId');
 
+        $targetInfo = ReactionHelper::parseTargetId($targetId);
+        $moduleSrl = $targetInfo['module_srl'];
+
         $member = Session::getMemberInfo();
+        $config = $moduleSrl ? static::getPartConfig($moduleSrl) : static::getConfig();
 
         try {
-            ReactionController::react($member, $reactionMode, $reaction, $targetId, $parentId);
+            ReactionController::react($config, $member, $reactionMode, $reaction, $targetId, $parentId);
         } catch (Exception $e) {
             $this->setError(-1);
             $this->setMessage($e->getMessage(), 'error');

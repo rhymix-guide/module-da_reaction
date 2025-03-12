@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace Rhymix\Modules\Da_reaction\Src\Models;
 
+use CommentModel;
+use DocumentModel;
 use Rhymix\Framework\DB;
 use Rhymix\Framework\Exception;
+use Rhymix\Framework\Exceptions\MustLogin;
 use Rhymix\Framework\Helpers\SessionHelper;
+use Rhymix\Modules\Da_reaction\Src\Exceptions\CannotReactToOwnTargetException;
 use Rhymix\Modules\Da_reaction\Src\ModuleBase;
 use Rhymix\Modules\Da_reaction\Src\ReactionHelper;
 
@@ -184,15 +188,17 @@ class ReactionModel extends ModuleBase
      * - 추가 가능: 1 (ModuleBase::REACTABLE_ADD)
      * - 취소 가능: 2 (ModuleBase::REACTABLE_REVOKE)
      * - 추가 및 취소 가능: 3 (ModuleBase::REACTABLE)
+     *
+     * @throws CannotReactToOwnTargetException
      */
-    public static function reactable(string $targetId, string $reaction, SessionHelper $member): int
+    public static function reactable(ReactionConfig $config, SessionHelper $member, string $targetId, string $reaction): int
     {
         $reactable = ModuleBase::NOT_REACTABLE;
-        // FIXME
-        $reactionLimit = 20;
+
+        $reactionLimit = $config->reaction_limit;
 
         if (!$member->isMember()) {
-            return ModuleBase::NOT_REACTABLE;
+            throw new MustLogin();
         }
 
         $db = DB::getInstance();

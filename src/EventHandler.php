@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace Rhymix\Modules\Da_reaction\Src;
 
 use Context;
+use MemberModel;
 use ModuleHandler;
+use Rhymix\Framework\Exception;
+use Rhymix\Framework\Session;
 use Rhymix\Modules\Da_reaction\Src\Models\ReactionModel;
+use TemplateHandler;
 
 class EventHandler extends ModuleBase
 {
@@ -14,7 +18,7 @@ class EventHandler extends ModuleBase
      *
      * @see \ModuleHandler::triggerCall()
      */
-    public static function adminDashboard(object $object): void
+    public function adminDashboard(object $object): void
     {
         $html = <<<HTML
         <section style="background-color: #eff6ff;">
@@ -30,7 +34,7 @@ class EventHandler extends ModuleBase
     /**
      * @param object $object
      */
-    public static function ListenerModuleHandlerProcAfter($object): void
+    public function ListenerModuleHandlerProcAfter($object): void
     {
         if (Context::getResponseMethod() !== 'HTML') {
             return;
@@ -41,15 +45,22 @@ class EventHandler extends ModuleBase
             return;
         }
 
+        $moduleSrl = intval($object->module_srl);
+        $config = ModuleBase::getPartConfig($moduleSrl);
+
+        if ($config->enable === false) {
+            return;
+        }
+
         $requestDocumentSrl = intval(Context::get('document_srl'));
 
         if (!$requestDocumentSrl) {
             return;
         }
 
-        $moduleSrl = intval($object->module_srl);
-        $memberSrl = intval(Context::get('logged_info')->member_srl);
-        $isAdmin = Context::get('logged_info')->is_admin === 'Y';
+        $member = Session::getMemberInfo();
+        $memberSrl = $member->member_srl;
+        $isAdmin = $member->isAdmin();
         $memberInfo = json_encode([
             'memberId' => $memberSrl,
             'isAdmin' => $isAdmin,
@@ -58,7 +69,7 @@ class EventHandler extends ModuleBase
 
         $reactions = ReactionModel::getReactionsByParentId(
             ReactionHelper::generateIdByDocument($moduleSrl, intval($requestDocumentSrl)),
-            intval(Context::get('logged_info')->member_srl)
+            $memberSrl
         );
 
         $modulePath = ModuleHandler::getModulePath('da_reaction');
@@ -89,22 +100,38 @@ class EventHandler extends ModuleBase
         }
         $data['emoticons'] = array_merge($data['emoticons'], ReactionHelper::getImportImages());
 
-        $oModel = new ReactionModel();
 
-        $reactionData = $oModel->getReactionsByParentId("document:{$moduleSrl}:{$requestDocumentSrl}", $memberSrl);
+        $reactionModel = new ReactionModel();
+
+        $reactionData = $reactionModel->getReactionsByParentId("document:{$moduleSrl}:{$requestDocumentSrl}", $memberSrl);
 
         $categories = json_encode($data['categories']);
         $emoticons = json_encode($data['emoticons']);
         $alias = json_encode($data['alias']);
         $endpoints = json_encode([
-            'react' => str_replace('&amp;', '&', getUrl('', 'module', 'da_reaction', 'act', 'procDa_reactionReact')),
+            'react' => getNotEncodedUrl('', 'module', 'da_reaction', 'act', 'procDa_reactionReact'),
         ]);
         $reactionData = json_encode($reactionData);
+
+        $reactable = true;
+
+        try {
+            $reactable = $config->reactable($member);
+        } catch (Exception $e) {
+            $reactable = false;
+        }
+
+        $config = json_encode([
+            'reactable' => $reactable,
+            'reactionLimit' => $config->reaction_limit,
+            'reactionSelf' => $config->reaction_self,
+        ]);
 
         $headContent = <<<HTML
         <script>
         document.addEventListener('daReaction:init', function (e) {
             const daReaction = e.detail;
+            daReaction.setOptions({$config});
             daReaction.setMemberInfo({$memberInfo});
             daReaction.setEndpoints({$endpoints});
             daReaction.addCategories({$categories});
@@ -124,7 +151,7 @@ class EventHandler extends ModuleBase
                             <span class="da-reaction__emoji" x-text="item.emoji"></span>
                         </template>
                         <template x-if="item.renderType === 'image'">
-                            <img x-bind:src="item.url" loading="lazy" :alt="`이모티콘: ${item . reaction}`" />
+                            <img x-bind:src="item.url" loading="lazy" :alt="`이모티콘: ${item.reaction}`" />
                         </template>
                     </span>
                 </template>
@@ -136,22 +163,24 @@ class EventHandler extends ModuleBase
 
         /** @var \ModuleController */
         $moduleControler = getController('module');
-        $moduleControler->addTriggerFunction('display', 'after', self::class . '::ListenerDisplay');
+        $moduleControler->addTriggerFunction('display', 'after', [$this, 'ListenerDisplay']);
     }
 
-    public static function ListenerDisplay(string &$content): void
+    public function ListenerDisplay(string &$content): void
     {
         if (Context::getResponseMethod() !== 'HTML') {
             return;
         }
 
-        $moduleInfo = Context::get('module_info');
+        $moduleInfo = Context::get('current_module_info');
+        $moduleSrl = intval($moduleInfo->module_srl);
+        $documentSrl = null;
+
         if ($moduleInfo->module !== 'board') {
             return;
         }
 
-        $moduleSrl = intval($moduleInfo->module_srl);
-        $documentSrl = null;
+        $config = ModuleBase::getPartConfig($moduleInfo->module_srl);
 
         $requestDocumentSrl = intval(Context::get('document_srl'));
 
@@ -164,24 +193,69 @@ class EventHandler extends ModuleBase
             return;
         }
 
-
-
         // 문서 리액션
-        if (stripos($content, "daReaction('" . ReactionHelper::generateIdByDocument($moduleSrl, intval($documentSrl)) . "'") === false) {
-            $targetId = ReactionHelper::generateIdByDocument($moduleSrl, intval($documentSrl));
-            $tag = '<div class="da-reaction" x-da-reaction-print x-data="daReaction(\'' . $targetId . '\')"></div>';
-            $content = preg_replace('/<!--AfterDocument\([0-9]+,[0-9]+\)-->/', "$tag\$0", $content) ?? $content;
+        if ($config->document_insert_position !== 'disable') {
+            if (stripos($content, "daReaction('" . ReactionHelper::generateIdByDocument($moduleSrl, intval($documentSrl)) . "'") === false) {
+                $targetId = ReactionHelper::generateIdByDocument($moduleSrl, intval($documentSrl));
+                $tag = '<div class="da-reaction" x-da-reaction-print x-data="daReaction(\'' . $targetId . '\')"></div>';
+                $position = $config->document_insert_position;
+                $content = preg_replace(
+                    '/<!--' . ucfirst($position) . 'Document\([0-9]+,[0-9]+\)-->/',
+                    $position === 'before' ? "\$0{$tag}" : "{$tag}\$0",
+                    $content
+                ) ?? $content;
+            }
         }
 
         // 댓글 리액션
-        preg_match_all('/<!--AfterComment\((?<srl>[0-9]+),([0-9]+)\)-->/', $content, $matches);
-        $commentSrlArray = $matches['srl'];
-        foreach ($commentSrlArray as $commentSrl) {
-            if (stripos($content, "daReaction('" . ReactionHelper::generateIdByComment($moduleSrl, intval($commentSrl), intval($documentSrl)) . "'") === false) {
+        if ($config->comment_insert_position !== 'disable') {
+            preg_match_all('/<!--AfterComment\((?<srl>[0-9]+),([0-9]+)\)-->/', $content, $matches);
+            $commentSrlArray = $matches['srl'];
+            foreach ($commentSrlArray as $commentSrl) {
                 $targetId = ReactionHelper::generateIdByComment($moduleSrl, intval($commentSrl), intval($documentSrl));
-                $tag = '<div class="da-reaction" x-da-reaction-print x-data="daReaction(\'' . $targetId . '\')"></div>';
-                $content = preg_replace('/<!--AfterComment\(' . $commentSrl . ',[0-9]+\)-->/', "$tag\$0", $content) ?? $content;
+                if (strpos($content, "daReaction('{$targetId}'") === false) {
+                    $tag = '<div class="da-reaction" x-da-reaction-print x-data="daReaction(\'' . $targetId . '\')"></div>';
+                    $position = $config->comment_insert_position;
+                    $content = preg_replace(
+                        '/<!--' . ucfirst($position) . 'Comment\(' . $commentSrl . ',[0-9]+\)-->/',
+                        $position === 'before' ? "\$0{$tag}" : "{$tag}\$0",
+                        $content
+                    ) ?? $content;
+                }
             }
         }
+    }
+
+    public function ListenerModuleDispAdditionSetup(string &$content): void
+    {
+        $moduleConfig = ModuleBase::getConfig();
+
+        if (!$moduleConfig->enable) {
+            return;
+        }
+
+        $current_module_srl = Context::get('module_srl');
+        if (!$current_module_srl) {
+            $current_module_srl = Context::get('current_module_info')->module_srl ?? 0;
+            if (!$current_module_srl) {
+                return;
+            }
+        }
+
+        $current_module_srl = intval($current_module_srl);
+
+        $partConfig = ModuleBase::getPartConfig($current_module_srl);
+
+        $group_list = MemberModel::getGroups();
+        foreach ($group_list ?: [] as $group) {
+            $group->title = Context::replaceUserLang($group->title, true);
+        }
+        Context::set('group_list', $group_list);
+
+        Context::set('daReactionPartConfig', $partConfig);
+
+        $oTemplate = TemplateHandler::getInstance();
+        $tpl = $oTemplate->compile("{$this->module_path}views/admin/", 'part-config');
+        $content .= $tpl;
     }
 }

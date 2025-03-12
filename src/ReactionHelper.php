@@ -112,4 +112,27 @@ class ReactionHelper
 
         return $result;
     }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public static function parseTargetId(string $target): array
+    {
+        $result = [];
+
+        $parts = explode(':', $target);
+        if ($parts[0] === 'document' && count($parts) === 3) {
+            $result['type'] = $parts[0];
+            $result['module_srl'] = intval($parts[1]);
+            $result['document_srl'] = intval($parts[2]);
+        } else if ($parts[0] === 'comment' && count($parts) === 3) {
+            $result['type'] = $parts[0];
+            $result['module_srl'] = intval($parts[1]);
+            $result['comment_srl'] = intval($parts[2]);
+        } else {
+            $result = $parts;
+        }
+
+        return $result;
+    }
 }
