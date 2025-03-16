@@ -32,7 +32,6 @@ class RequestHandler extends ModuleBase
 
         $member = Session::getMemberInfo();
         $config = $moduleSrl ? static::getPartConfig($moduleSrl) : static::getConfig();
-        dp($moduleSrl, $config->reaction_limit);
 
         try {
             ReactionController::react($config, $member, $reactionMode, $reaction, $targetId, $parentId);

@@ -54,7 +54,6 @@ class AdminRequestHandler extends ModuleBase
         $vars = Context::getRequestVars();
         $vars->ignore_part_config ??= false;
 
-        dp($vars);
         $config->setVars((array) $vars);
 
         // 변경된 설정을 저장
