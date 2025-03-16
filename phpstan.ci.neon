@@ -1,0 +1,10 @@
+includes:
+	- phpstan-baseline-ci.neon
+parameters:
+	level: 6
+	phpVersion: 70400
+	paths:
+		- ./src/
+	bootstrapFiles:
+		- rhymix/common/autoload.php
+		- vendor/autoload.php
