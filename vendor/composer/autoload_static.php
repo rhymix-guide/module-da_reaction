@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit807c8b77cb4f8c4ba3caef82601aab87
+class ComposerStaticInitad57b0d53afa63965e86a0513b3ff915
 {
     public static $prefixLengthsPsr4 = array (
         'R' => 
@@ -38,12 +38,17 @@ class ComposerStaticInit807c8b77cb4f8c4ba3caef82601aab87
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\AdminController' => __DIR__ . '/../..' . '/src/controllers/AdminController.php',
+        'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\AdminRequestHandler' => __DIR__ . '/../..' . '/src/controllers/AdminRequestHandler.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\ReactionController' => __DIR__ . '/../..' . '/src/controllers/ReactionController.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\RequestHandler' => __DIR__ . '/../..' . '/src/controllers/RequestHandler.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\EventHandler' => __DIR__ . '/../..' . '/src/EventHandler.php',
+        'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\CannotReactToOwnTargetException' => __DIR__ . '/../..' . '/src/exceptions/CannotReactToOwnTargetException.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionIdTooLongException' => __DIR__ . '/../..' . '/src/exceptions/ReactionIdTooLongException.php',
+        'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionLimitExceededException' => __DIR__ . '/../..' . '/src/exceptions/ReactionLimitExceededException.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\TargetIdTooLongException' => __DIR__ . '/../..' . '/src/exceptions/TargetIdTooLongException.php',
+        'Rhymix\\Modules\\Da_reaction\\Src\\Models\\ReactionConfig' => __DIR__ . '/../..' . '/src/models/ReactionConfig.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Models\\ReactionModel' => __DIR__ . '/../..' . '/src/models/ReactionModel.php',
+        'Rhymix\\Modules\\Da_reaction\\Src\\Models\\ReactionPartConfig' => __DIR__ . '/../..' . '/src/models/ReactionPartConfig.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\ModuleBase' => __DIR__ . '/../..' . '/src/ModuleBase.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\ReactionHelper' => __DIR__ . '/../..' . '/src/ReactionHelper.php',
     );
@@ -51,9 +56,9 @@ class ComposerStaticInit807c8b77cb4f8c4ba3caef82601aab87
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit807c8b77cb4f8c4ba3caef82601aab87::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit807c8b77cb4f8c4ba3caef82601aab87::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit807c8b77cb4f8c4ba3caef82601aab87::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitad57b0d53afa63965e86a0513b3ff915::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitad57b0d53afa63965e86a0513b3ff915::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitad57b0d53afa63965e86a0513b3ff915::$classMap;
 
         }, null, ClassLoader::class);
     }

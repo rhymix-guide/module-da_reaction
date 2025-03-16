@@ -1,7 +1,10 @@
 parameters:
 	level: 6
-	phpVersion: 70400
+	phpVersion:
+		min: 70400
+		max: 80499
 	paths:
 		- ./src/
 	bootstrapFiles:
+		- ../../common/autoload.php
 		- phpstan-bootstrap.php

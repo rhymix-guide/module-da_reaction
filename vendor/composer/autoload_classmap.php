@@ -8,12 +8,17 @@ $baseDir = dirname($vendorDir);
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\AdminController' => $baseDir . '/src/controllers/AdminController.php',
+    'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\AdminRequestHandler' => $baseDir . '/src/controllers/AdminRequestHandler.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\ReactionController' => $baseDir . '/src/controllers/ReactionController.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\RequestHandler' => $baseDir . '/src/controllers/RequestHandler.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\EventHandler' => $baseDir . '/src/EventHandler.php',
+    'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\CannotReactToOwnTargetException' => $baseDir . '/src/exceptions/CannotReactToOwnTargetException.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionIdTooLongException' => $baseDir . '/src/exceptions/ReactionIdTooLongException.php',
+    'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionLimitExceededException' => $baseDir . '/src/exceptions/ReactionLimitExceededException.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\TargetIdTooLongException' => $baseDir . '/src/exceptions/TargetIdTooLongException.php',
+    'Rhymix\\Modules\\Da_reaction\\Src\\Models\\ReactionConfig' => $baseDir . '/src/models/ReactionConfig.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Models\\ReactionModel' => $baseDir . '/src/models/ReactionModel.php',
+    'Rhymix\\Modules\\Da_reaction\\Src\\Models\\ReactionPartConfig' => $baseDir . '/src/models/ReactionPartConfig.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\ModuleBase' => $baseDir . '/src/ModuleBase.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\ReactionHelper' => $baseDir . '/src/ReactionHelper.php',
 );
