@@ -37,9 +37,9 @@ jobs:
           php-version: ${{ matrix.php }}
 
       - name: PHP Lint
-        run: if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
+        run: if find . -name "*.php" ! -path "./vendor/*" ! -path "./rhymix/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
 
       - name: PHPStan
         run: |
           composer install
-          composer run phpstan
+          composer run phpstan -- --configuration=phpstan.ci.neon
