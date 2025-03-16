@@ -19,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: PHP Syntax Checker (Lint)
-        uses: StephaneBour/actions-php-lint@${{ matrix.php }}
+      - name: PHP Syntax Checker (Lint) ${{ matrix.php }}
+        uses: StephaneBour/actions-php-lint@7.4
         with:
           dir: './src'
