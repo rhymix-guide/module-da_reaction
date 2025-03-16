@@ -10,7 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
+        php:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - '8.3'
+          - '8.4'
     permissions:
       actions: read
       contents: read
@@ -19,7 +25,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: PHP Syntax Checker (Lint) ${{ matrix.php }}
-        uses: StephaneBour/actions-php-lint@7.4
+      - name: Set up php ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
         with:
-          dir: './src'
+          php-version: ${{ matrix.php }}
+
+      - name: PHP Lint
+        run: if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
