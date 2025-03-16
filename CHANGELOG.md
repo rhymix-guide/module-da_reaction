@@ -2,9 +2,16 @@
 
 ## [1.1.1](https://github.com/damoang-users/rx-da_reaction/compare/v1.1.0...v1.1.1) (2025-03-16)
 
+### Features
+
+* 리액션 버튼 hover 및 리액션 시 배경색 추가 by @rzglitch in https://github.com/damoang-users/rx-da_reaction/pull/24
+
 ### Bug Fixes
 
 * 디버깅용 코드 제거 ([566822b](https://github.com/damoang-users/rx-da_reaction/commit/566822baca7e34d917ecdd9582001281e176cf0c))
+
+### New Contributors
+* [@rzglitch](https://github.com/rzglitch) made their first contribution in https://github.com/damoang-users/rx-da_reaction/pull/24
 
 ## [1.1.0](https://github.com/damoang-users/rx-da_reaction/compare/v1.0.3...v1.1.0) (2025-03-15)
 
