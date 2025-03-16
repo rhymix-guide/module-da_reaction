@@ -1,8 +1,6 @@
 parameters:
 	level: 6
-	phpVersion:
-		min: 70333
-		max: 80499
+	phpVersion: 70400
 	paths:
 		- ./src/
 	bootstrapFiles:
