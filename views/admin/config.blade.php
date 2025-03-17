@@ -2,8 +2,6 @@
 /** @var \Rhymix\Modules\Da_reaction\Src\Models\ReactionConfig $daReactionConfig */
 ?>
 
-@json($daReactionConfig->gets());
-
 @if($XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID === 'da_reactioin-admin-config')
     <div class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
         <p>{$XE_VALIDATOR_MESSAGE}</p>
