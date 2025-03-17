@@ -30,7 +30,7 @@
             method="listenerAfterModuleHandlerProc" />
         <eventHandler before="module.dispAdditionSetup"
             class="Src\EventHandler"
-            method="listenerModuleDispAdditionSetup" />
+            method="listenerBeforeModuleDispAdditionSetup" />
         <!-- 글 이동 -->
         <eventHandler after="document.moveDocumentModule"
             class="Src\EventHandler"

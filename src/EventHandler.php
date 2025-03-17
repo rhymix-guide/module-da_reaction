@@ -243,6 +243,8 @@ class EventHandler extends ModuleBase
     }
 
     /**
+     * 글을 이동할 때 글과 댓글의 리액션 module_srl 변경
+     *
      * @see \DocumentAdminController::moveDocumentModule()
      */
     public function listenerAfterDocumentMoveDocumentModule(\stdClass $args): BaseObject
@@ -288,6 +290,8 @@ class EventHandler extends ModuleBase
     }
 
     /**
+     * 글을 삭제할 때 글과 댓글의 리액션 데이터 삭제
+     *
      * @see \DocumentController::deleteDocument()
      */
     public function listenerAfterDocumentDeleteDocument(\stdClass $args): BaseObject
@@ -305,6 +309,8 @@ class EventHandler extends ModuleBase
     }
 
     /**
+     * 댓글을 삭제할 때 리액션 데이터 삭제
+     *
      * @see \CommentController::deleteComment()
      * @see \CommentController::deleteComments()
      * @see \CommentController::updateCommentByDelete()
