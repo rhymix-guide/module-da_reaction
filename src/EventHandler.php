@@ -15,27 +15,9 @@ use TemplateHandler;
 class EventHandler extends ModuleBase
 {
     /**
-     * 트리거를 이용해 관리자 대시보드에 출력하는 예제
-     *
-     * @see \ModuleHandler::triggerCall()
-     */
-    public function adminDashboard(object $object): void
-    {
-        $html = <<<HTML
-        <section style="background-color: #eff6ff;">
-            <h2>Example1 모듈</h2>
-            <p style="padding: 10px;">Example1 모듈의 `EventHandler::adminDashboard()`에서 출력</p>
-            <p style="padding: 10px;">Example1 모듈이 활성화되면 출력됨</p>
-        </section>
-        HTML;
-
-        array_unshift($object->right, $html);
-    }
-
-    /**
      * @param object $object
      */
-    public function ListenerModuleHandlerProcAfter($object): void
+    public function listenerAfterModuleHandlerProc($object): void
     {
         if (Context::getResponseMethod() !== 'HTML') {
             return;
@@ -164,10 +146,10 @@ class EventHandler extends ModuleBase
 
         /** @var \ModuleController */
         $moduleControler = getController('module');
-        $moduleControler->addTriggerFunction('display', 'after', [$this, 'ListenerDisplay']);
+        $moduleControler->addTriggerFunction('display', 'after', [$this, 'listenerDisplay']);
     }
 
-    public function ListenerDisplay(string &$content): void
+    public function listenerDisplay(string &$content): void
     {
         if (Context::getResponseMethod() !== 'HTML') {
             return;
@@ -227,7 +209,7 @@ class EventHandler extends ModuleBase
         }
     }
 
-    public function ListenerModuleDispAdditionSetup(string &$content): void
+    public function listenerBeforeModuleDispAdditionSetup(string &$content): void
     {
         $moduleConfig = ModuleBase::getConfig();
 

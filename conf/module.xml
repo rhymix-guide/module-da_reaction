@@ -27,10 +27,10 @@
     <eventHandlers>
         <eventHandler after="moduleHandler.proc"
             class="Src\EventHandler"
-            method="ListenerModuleHandlerProcAfter" />
+            method="listenerAfterModuleHandlerProc" />
         <eventHandler before="module.dispAdditionSetup"
             class="Src\EventHandler"
-            method="ListenerModuleDispAdditionSetup" />
+            method="listenerModuleDispAdditionSetup" />
         <!-- 글 이동 -->
         <eventHandler after="document.moveDocumentModule"
             class="Src\EventHandler"
