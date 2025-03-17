@@ -435,4 +435,29 @@ class ReactionModel extends ModuleBase
             $documentTargetId
         );
     }
+
+    public static function deleteCommentReaction(string $commentTargetId): void
+    {
+        $db = DB::getInstance();
+
+        // reaction 테이블에서 대상 삭제
+        $tableReaction = ModuleBase::$tableReaction;
+        $db->query(
+            "DELETE FROM `{$tableReaction}`
+            WHERE
+                `target_id` = ?
+            ",
+            $commentTargetId,
+        );
+
+        // reaction_choose 테이블에서 대상 삭제
+        $tableChoose = ModuleBase::$tableReactionChoose;
+        $db->query(
+            "DELETE FROM `{$tableChoose}`
+            WHERE
+                `target_id` = ?
+            ",
+            $commentTargetId
+        );
+    }
 }

@@ -39,6 +39,10 @@
         <eventHandler after="document.deleteDocument"
             class="Src\EventHandler"
             method="listenerAfterDocumentDeleteDocument" />
+        <!-- 댓글 삭제 -->
+        <eventHandler after="comment.deleteComment"
+            class="Src\EventHandler"
+            method="listenerAfterCommentDeleteComment" />
     </eventHandlers>
 
     <!-- 관리페이지용 메뉴 -->

@@ -321,4 +321,23 @@ class EventHandler extends ModuleBase
 
         return $output;
     }
+
+    /**
+     * @see \CommentController::deleteComment()
+     * @see \CommentController::deleteComments()
+     * @see \CommentController::updateCommentByDelete()
+     */
+    public function listenerAfterCommentDeleteComment(\CommentItem $args): BaseObject
+    {
+        $output = new BaseObject();
+
+        $moduleSrl = $args->get('module_srl');
+        $commentSrl = $args->get('comment_srl');
+
+        $commentTargetId = ReactionHelper::generateIdByComment($moduleSrl, $commentSrl, null);
+
+        ReactionModel::deleteCommentReaction($commentTargetId);
+
+        return $output;
+    }
 }
