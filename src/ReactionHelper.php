@@ -31,9 +31,11 @@ class ReactionHelper
     public static function generateIdByComment(int $moduleSrl, int $commentSrl, ?int $documentSrl): ?string
     {
         $targetId = implode(':', ['comment', $moduleSrl, $commentSrl]);
-        $parentId = self::generateIdByDocument($moduleSrl, $documentSrl);
+        if ($documentSrl) {
+            $parentId = self::generateIdByDocument($moduleSrl, $documentSrl);
+        }
 
-        return "{$targetId}@{$parentId}";
+        return $documentSrl ? "{$targetId}@{$parentId}" : $targetId;
     }
 
     /**
