@@ -408,4 +408,31 @@ class ReactionModel extends ModuleBase
     {
         static::moveDocumentReaction($originTargetId, $newTargetId, $newParentId);
     }
+
+    public static function deleteDocumentReaction(string $documentTargetId): void
+    {
+        $db = DB::getInstance();
+
+        // reaction 테이블에서 대상 삭제
+        $tableReaction = ModuleBase::$tableReaction;
+        $db->query(
+            "DELETE FROM `{$tableReaction}`
+            WHERE
+                `target_id` = ?
+                OR `parent_id` = ?
+            ",
+            $documentTargetId,
+            $documentTargetId
+        );
+
+        // reaction_choose 테이블에서 대상 삭제
+        $tableChoose = ModuleBase::$tableReactionChoose;
+        $db->query(
+            "DELETE FROM `{$tableChoose}`
+            WHERE
+                `parent_id` = ?
+            ",
+            $documentTargetId
+        );
+    }
 }

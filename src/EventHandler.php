@@ -304,4 +304,21 @@ class EventHandler extends ModuleBase
 
         return $output;
     }
+
+    /**
+     * @see \DocumentController::deleteDocument()
+     */
+    public function listenerAfterDocumentDeleteDocument(\stdClass $args): BaseObject
+    {
+        $output = new BaseObject();
+
+        $moduleSrl = $args->module_srl;
+        $documentSrl = $args->document_srl;
+
+        $documentTargetId = ReactionHelper::generateIdByDocument($moduleSrl, $documentSrl);
+
+        ReactionModel::deleteDocumentReaction($documentTargetId);
+
+        return $output;
+    }
 }
