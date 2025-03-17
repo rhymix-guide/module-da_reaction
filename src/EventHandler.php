@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Rhymix\Modules\Da_reaction\Src;
 
+use BaseObject;
 use Context;
 use MemberModel;
 use ModuleHandler;
@@ -257,5 +258,50 @@ class EventHandler extends ModuleBase
         $oTemplate = TemplateHandler::getInstance();
         $tpl = $oTemplate->compile("{$this->module_path}views/admin/", 'part-config');
         $content .= $tpl;
+    }
+
+    /**
+     * @see \DocumentAdminController::moveDocumentModule()
+     */
+    public function listenerAfterDocumentMoveDocumentModule(\stdClass $args): BaseObject
+    {
+        $output = new BaseObject();
+
+        foreach ($args->document_list as $document) {
+            $originModuleSrl = $document->module_srl;
+            $newModuleSrl = $args->module_srl;
+            $documentSrl = $document->document_srl;
+
+            $originTargetId = ReactionHelper::generateIdByDocument($originModuleSrl, $documentSrl);
+            $newTargetId = ReactionHelper::generateIdByDocument($newModuleSrl, $documentSrl);
+
+            ReactionModel::moveDocumentReaction(
+                $originTargetId,
+                $newTargetId,
+                $newTargetId,
+            );
+
+
+            $db = \DB::getInstance();
+
+            // 댓글 이동
+            $table = ModuleBase::$tableReaction;
+            $result = $db->query("SELECT * FROM `{$table}` WHERE `parent_id` = ?", [$originTargetId]);
+            $result = $result->fetchAll();
+            foreach ($result as $row) {
+                $targetInfo = ReactionHelper::parseTargetId($row->target_id);
+                $originTargetId = ReactionHelper::generateIdByComment($originModuleSrl, $targetInfo['comment_srl'], null);
+                $newTargetId = ReactionHelper::generateIdByComment($newModuleSrl, $targetInfo['comment_srl'], null);
+                $newParentId = ReactionHelper::generateIdByDocument($newModuleSrl, $documentSrl);
+
+                ReactionModel::moveCommentReaction(
+                    $originTargetId,
+                    $newTargetId,
+                    $newParentId,
+                );
+            }
+        }
+
+        return $output;
     }
 }

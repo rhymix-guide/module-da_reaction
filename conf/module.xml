@@ -31,6 +31,10 @@
         <eventHandler before="module.dispAdditionSetup"
             class="Src\EventHandler"
             method="ListenerModuleDispAdditionSetup" />
+        <!-- 글 이동 -->
+        <eventHandler after="document.moveDocumentModule"
+            class="Src\EventHandler"
+            method="listenerAfterDocumentMoveDocumentModule" />
     </eventHandlers>
 
     <!-- 관리페이지용 메뉴 -->

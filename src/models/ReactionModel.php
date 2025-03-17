@@ -364,4 +364,48 @@ class ReactionModel extends ModuleBase
 
         return true;
     }
+
+    public static function moveDocumentReaction(string $originTargetId, string $newTargetId, string $newParentId): void
+    {
+        $db = DB::getInstance();
+
+        // reaction 테이블에서 대상 변경
+        $table = ModuleBase::$tableReaction;
+        $db->query(
+            "UPDATE `{$table}`
+                SET
+                    `target_id` = ?,
+                    `parent_id` = ?
+                WHERE
+                    `target_id` = ?
+            ",
+            [
+                $newTargetId,
+                $newParentId,
+                $originTargetId,
+            ]
+        );
+
+        // reaction_choose 테이블에서 대상 변경
+        $table = ModuleBase::$tableReactionChoose;
+        $db->query(
+            "UPDATE `{$table}`
+                SET
+                    `target_id` = ?,
+                    `parent_id` = ?
+                WHERE
+                    `target_id` = ?
+            ",
+            [
+                $newTargetId,
+                $newParentId,
+                $originTargetId,
+            ]
+        );
+    }
+
+    public static function moveCommentReaction(string $originTargetId, string $newTargetId, string $newParentId): void
+    {
+        static::moveDocumentReaction($originTargetId, $newTargetId, $newParentId);
+    }
 }
