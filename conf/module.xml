@@ -27,10 +27,22 @@
     <eventHandlers>
         <eventHandler after="moduleHandler.proc"
             class="Src\EventHandler"
-            method="ListenerModuleHandlerProcAfter" />
+            method="listenerAfterModuleHandlerProc" />
         <eventHandler before="module.dispAdditionSetup"
             class="Src\EventHandler"
-            method="ListenerModuleDispAdditionSetup" />
+            method="listenerBeforeModuleDispAdditionSetup" />
+        <!-- 글 이동 -->
+        <eventHandler after="document.moveDocumentModule"
+            class="Src\EventHandler"
+            method="listenerAfterDocumentMoveDocumentModule" />
+        <!-- 글 삭제 -->
+        <eventHandler after="document.deleteDocument"
+            class="Src\EventHandler"
+            method="listenerAfterDocumentDeleteDocument" />
+        <!-- 댓글 삭제 -->
+        <eventHandler after="comment.deleteComment"
+            class="Src\EventHandler"
+            method="listenerAfterCommentDeleteComment" />
     </eventHandlers>
 
     <!-- 관리페이지용 메뉴 -->

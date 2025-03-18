@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Rhymix\Modules\Da_reaction\Src;
 
+use BaseObject;
 use Context;
 use MemberModel;
 use ModuleHandler;
@@ -14,27 +15,9 @@ use TemplateHandler;
 class EventHandler extends ModuleBase
 {
     /**
-     * 트리거를 이용해 관리자 대시보드에 출력하는 예제
-     *
-     * @see \ModuleHandler::triggerCall()
-     */
-    public function adminDashboard(object $object): void
-    {
-        $html = <<<HTML
-        <section style="background-color: #eff6ff;">
-            <h2>Example1 모듈</h2>
-            <p style="padding: 10px;">Example1 모듈의 `EventHandler::adminDashboard()`에서 출력</p>
-            <p style="padding: 10px;">Example1 모듈이 활성화되면 출력됨</p>
-        </section>
-        HTML;
-
-        array_unshift($object->right, $html);
-    }
-
-    /**
      * @param object $object
      */
-    public function ListenerModuleHandlerProcAfter($object): void
+    public function listenerAfterModuleHandlerProc($object): void
     {
         if (Context::getResponseMethod() !== 'HTML') {
             return;
@@ -163,10 +146,10 @@ class EventHandler extends ModuleBase
 
         /** @var \ModuleController */
         $moduleControler = getController('module');
-        $moduleControler->addTriggerFunction('display', 'after', [$this, 'ListenerDisplay']);
+        $moduleControler->addTriggerFunction('display', 'after', [$this, 'listenerDisplay']);
     }
 
-    public function ListenerDisplay(string &$content): void
+    public function listenerDisplay(string &$content): void
     {
         if (Context::getResponseMethod() !== 'HTML') {
             return;
@@ -226,7 +209,7 @@ class EventHandler extends ModuleBase
         }
     }
 
-    public function ListenerModuleDispAdditionSetup(string &$content): void
+    public function listenerBeforeModuleDispAdditionSetup(string &$content): void
     {
         $moduleConfig = ModuleBase::getConfig();
 
@@ -257,5 +240,94 @@ class EventHandler extends ModuleBase
         $oTemplate = TemplateHandler::getInstance();
         $tpl = $oTemplate->compile("{$this->module_path}views/admin/", 'part-config');
         $content .= $tpl;
+    }
+
+    /**
+     * 글을 이동할 때 글과 댓글의 리액션 module_srl 변경
+     *
+     * @see \DocumentAdminController::moveDocumentModule()
+     */
+    public function listenerAfterDocumentMoveDocumentModule(\stdClass $args): BaseObject
+    {
+        $output = new BaseObject();
+
+        foreach ($args->document_list as $document) {
+            $originModuleSrl = $document->module_srl;
+            $newModuleSrl = $args->module_srl;
+            $documentSrl = $document->document_srl;
+
+            $originTargetId = ReactionHelper::generateIdByDocument($originModuleSrl, $documentSrl);
+            $newTargetId = ReactionHelper::generateIdByDocument($newModuleSrl, $documentSrl);
+
+            ReactionModel::moveDocumentReaction(
+                $originTargetId,
+                $newTargetId,
+                $newTargetId,
+            );
+
+
+            $db = \DB::getInstance();
+
+            // 댓글 이동
+            $table = ModuleBase::$tableReaction;
+            $result = $db->query("SELECT * FROM `{$table}` WHERE `parent_id` = ?", [$originTargetId]);
+            $result = $result->fetchAll();
+            foreach ($result as $row) {
+                $targetInfo = ReactionHelper::parseTargetId($row->target_id);
+                $originTargetId = ReactionHelper::generateIdByComment($originModuleSrl, $targetInfo['comment_srl'], null);
+                $newTargetId = ReactionHelper::generateIdByComment($newModuleSrl, $targetInfo['comment_srl'], null);
+                $newParentId = ReactionHelper::generateIdByDocument($newModuleSrl, $documentSrl);
+
+                ReactionModel::moveCommentReaction(
+                    $originTargetId,
+                    $newTargetId,
+                    $newParentId,
+                );
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * 글을 삭제할 때 글과 댓글의 리액션 데이터 삭제
+     *
+     * @see \DocumentController::deleteDocument()
+     */
+    public function listenerAfterDocumentDeleteDocument(\stdClass $args): BaseObject
+    {
+        $output = new BaseObject();
+
+        $moduleSrl = $args->module_srl;
+        $documentSrl = $args->document_srl;
+
+        $documentTargetId = ReactionHelper::generateIdByDocument($moduleSrl, $documentSrl);
+
+        ReactionModel::deleteDocumentReaction($documentTargetId);
+
+        return $output;
+    }
+
+    /**
+     * 댓글을 삭제할 때 리액션 데이터 삭제
+     *
+     * @param \CommentItem|\BaseObject|\stdClass $args
+     *
+     * @see \CommentController::deleteComment()
+     * @see \CommentController::deleteComments()
+     * @see \CommentController::updateCommentByDelete()
+     */
+    public function listenerAfterCommentDeleteComment(object $args): BaseObject
+    {
+        $output = new BaseObject();
+
+        $moduleSrl = $args->module_srl ?? $args->get('module_srl');
+        $commentSrl = $args->comment_srl ?? $args->get('comment_srl');
+
+        $commentTargetId = ReactionHelper::generateIdByComment($moduleSrl, $commentSrl, null);
+
+        ReactionModel::deleteCommentReaction($commentTargetId);
+
+        return $output;
     }
 }

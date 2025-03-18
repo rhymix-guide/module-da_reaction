@@ -364,4 +364,100 @@ class ReactionModel extends ModuleBase
 
         return true;
     }
+
+    public static function moveDocumentReaction(string $originTargetId, string $newTargetId, string $newParentId): void
+    {
+        $db = DB::getInstance();
+
+        // reaction 테이블에서 대상 변경
+        $table = ModuleBase::$tableReaction;
+        $db->query(
+            "UPDATE `{$table}`
+                SET
+                    `target_id` = ?,
+                    `parent_id` = ?
+                WHERE
+                    `target_id` = ?
+            ",
+            [
+                $newTargetId,
+                $newParentId,
+                $originTargetId,
+            ]
+        );
+
+        // reaction_choose 테이블에서 대상 변경
+        $table = ModuleBase::$tableReactionChoose;
+        $db->query(
+            "UPDATE `{$table}`
+                SET
+                    `target_id` = ?,
+                    `parent_id` = ?
+                WHERE
+                    `target_id` = ?
+            ",
+            [
+                $newTargetId,
+                $newParentId,
+                $originTargetId,
+            ]
+        );
+    }
+
+    public static function moveCommentReaction(string $originTargetId, string $newTargetId, string $newParentId): void
+    {
+        static::moveDocumentReaction($originTargetId, $newTargetId, $newParentId);
+    }
+
+    public static function deleteDocumentReaction(string $documentTargetId): void
+    {
+        $db = DB::getInstance();
+
+        // reaction 테이블에서 대상 삭제
+        $tableReaction = ModuleBase::$tableReaction;
+        $db->query(
+            "DELETE FROM `{$tableReaction}`
+            WHERE
+                `target_id` = ?
+                OR `parent_id` = ?
+            ",
+            $documentTargetId,
+            $documentTargetId
+        );
+
+        // reaction_choose 테이블에서 대상 삭제
+        $tableChoose = ModuleBase::$tableReactionChoose;
+        $db->query(
+            "DELETE FROM `{$tableChoose}`
+            WHERE
+                `parent_id` = ?
+            ",
+            $documentTargetId
+        );
+    }
+
+    public static function deleteCommentReaction(string $commentTargetId): void
+    {
+        $db = DB::getInstance();
+
+        // reaction 테이블에서 대상 삭제
+        $tableReaction = ModuleBase::$tableReaction;
+        $db->query(
+            "DELETE FROM `{$tableReaction}`
+            WHERE
+                `target_id` = ?
+            ",
+            $commentTargetId,
+        );
+
+        // reaction_choose 테이블에서 대상 삭제
+        $tableChoose = ModuleBase::$tableReactionChoose;
+        $db->query(
+            "DELETE FROM `{$tableChoose}`
+            WHERE
+                `target_id` = ?
+            ",
+            $commentTargetId
+        );
+    }
 }
