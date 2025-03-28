@@ -432,10 +432,23 @@ class DaReaction {
       body: JSON.stringify(requestBody),
     });
 
+    // PHP Debugbar
+    window.phpdebugbar?.ajaxHandler.handle(response);
+
     const jsonData = await response.json();
 
     if (jsonData.status === 'success' || jsonData.error === 0) {
       this.store.reactions[targetId] = jsonData.reactions;
+
+      // 라이믹스 디버그
+      if (jsonData._rx_debug) {
+        jsonData._rx_debug.page_title = `Fetch : ${this.endpoints.react}`;
+        if (window.rhymix_debug_add_data) {
+          window.rhymix_debug_add_data(jsonData._rx_debug);
+        } else {
+          window.jsonData.push(jsonData._rx_debug);
+        }
+      }
     } else {
       alert(jsonData.message);
     }
