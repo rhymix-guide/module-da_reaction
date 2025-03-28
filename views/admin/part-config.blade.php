@@ -66,6 +66,7 @@
             <label class="x_control-label">리액션 제한 횟수</label>
             <div class="x_controls">
                 <input type="number" min="1" name="reaction_limit" placeholter="20" value="{{ $daReactionPartConfig->reaction_limit }}" />
+                <p class="x_help-block">추가할 수 있는 최대 리액션 이모티콘 수. 관리자는 제한이 적용되지 않습니다.</p>
             </div>
         </div>
 
@@ -74,6 +75,7 @@
             <div class="x_controls">
                 <label><input type="radio" name="reaction_self" value="Y" @checked($daReactionPartConfig->reaction_self) /> 허용 - 자신의 글, 댓글에 리액션 가능</label>
                 <label><input type="radio" name="reaction_self" value="N" @checked(!$daReactionPartConfig->reaction_self) /> 허용하지 않음</label>
+                <p class="x_help-block">관리자는 제한이 적용되지 않습니다.</p>
             </div>
         </div>
 
@@ -85,7 +87,7 @@
                         <input type="checkbox" name="reaction_allows[]" value="{{ $group->group_srl }}" @checked(in_array($group->group_srl, $daReactionPartConfig->getAllowGroups()))> {{ $group->title }}
                     </label>
                 @endforeach
-                <p class="x_help-block">그룹을 선택하지않으면 로그인 사용자에게 허용됩니다.</p>
+                <p class="x_help-block">그룹을 선택하지않으면 로그인 한 회원 모두에게 허용됩니다.</p>
             </div>
         </div>
 
