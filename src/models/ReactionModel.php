@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Rhymix\Modules\Da_reaction\Src\Models;
 
-use CommentModel;
-use DocumentModel;
 use Rhymix\Framework\DB;
 use Rhymix\Framework\Exception;
 use Rhymix\Framework\Exceptions\MustLogin;
@@ -27,10 +25,6 @@ use Rhymix\Modules\Da_reaction\Src\ReactionHelper;
  */
 class ReactionModel extends ModuleBase
 {
-    public function __construct()
-    {
-    }
-
     /**
      * @return string[]
      */
@@ -39,20 +33,20 @@ class ReactionModel extends ModuleBase
         $oDB = DB::getInstance();
 
         try {
+            $table = ModuleBase::$tableReactionChoose;
             $stmt = $oDB->query(
-                'SELECT `reaction`
-                    FROM `da_reaction_choose`
-                    WHERE
-                        `member_srl` = ?
-                        AND `target_id` = ?
-                ',
+                "SELECT `reaction` FROM `{$table}`
+                WHERE
+                    `member_srl` = ?
+                    AND `target_id` = ?
+                ",
                 $memberSrl,
                 $targetId,
             );
             if (!$stmt) {
                 throw new DaException('테이블이 생성되어있지 않습니다.');
             }
-            $result = $stmt->fetchAll();
+            $result = $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             if (Session::isAdmin()) {
                 throw new DaException("getLogs관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
@@ -61,10 +55,9 @@ class ReactionModel extends ModuleBase
         }
 
         $reactions = [];
-
-        array_map(function ($row) use (&$reactions) {
+        foreach ($result as $row) {
             $reactions[] = $row->reaction;
-        }, $result);
+        }
 
         return $reactions;
     }
@@ -77,20 +70,20 @@ class ReactionModel extends ModuleBase
         $oDB = DB::getInstance();
 
         try {
+            $table = ModuleBase::$tableReactionChoose;
             $stmt = $oDB->query(
-                'SELECT `reaction`, `target_id`
-                    FROM `da_reaction_choose`
-                    WHERE
-                        `member_srl` = ?
-                        AND `parent_id` = ?
-                ',
+                "SELECT `reaction`, `target_id` FROM `{$table}`
+                WHERE
+                    `member_srl` = ?
+                    AND `parent_id` = ?
+                ",
                 $memberSrl,
                 $parentId,
             );
             if (!$stmt) {
                 throw new Exception('테이블이 생성되어있지 않습니다.');
             }
-            $result = $stmt->fetchAll();
+            $result = $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             if (Session::isAdmin()) {
                 throw new DaException("getLogsByParentId관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
@@ -99,26 +92,26 @@ class ReactionModel extends ModuleBase
         }
 
         $reactions = [];
-        array_map(function ($row) use (&$reactions) {
-            if (!is_array($reactions[$row->target_id] ?? null)) {
-                $reactions[$row->target_id] = [];
-            }
+        foreach ($result as $row) {
+            $reactions[$row->target_id] ??= [];
             $reactions[$row->target_id][] = $row->reaction;
-        }, $result);
+        }
 
         return $reactions;
     }
 
     /**
      * 대상의 리액션 목록 반환
+     *
      * @return array<string,TReactionItem[]>
      */
     public static function getReactions(string $targetId, ?int $memberSrl): array
     {
         $reactions = [];
 
+        $db = DB::getInstance();
         try {
-            $stmt = DB::getInstance()->query(
+            $stmt = $db->query(
                 'SELECT `parent_id`, `target_id`, `reaction`, `reaction_count`
                     FROM `da_reaction`
                     WHERE `target_id` = ?
@@ -129,7 +122,7 @@ class ReactionModel extends ModuleBase
             if (!$stmt) {
                 throw new Exception('테이블이 생성되어있지 않습니다.');
             }
-            $result = $stmt->fetchAll();
+            $result = $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             if (Session::isAdmin()) {
                 throw new DaException("getReactions관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
@@ -147,9 +140,11 @@ class ReactionModel extends ModuleBase
             if ($memberSrl && $memberActions) {
                 $reactionData['choose'] = in_array($reactionData['reaction'], $memberActions);
             }
+            $reactions[$row->target_id] ??= [];
             $reactions[$row->target_id][] = $reactionData;
         }
 
+        // @phpstan-ignore return.type
         return $reactions;
     }
 
@@ -159,20 +154,19 @@ class ReactionModel extends ModuleBase
      */
     public static function getReactionsByParentId(string $parentId, ?int $memberSrl): array
     {
+        /** @var array<string,TReactionItem[]> */
         $reactions = [];
 
+        $db = DB::getInstance();
         try {
-            $stmt = DB::getInstance()->query(
+            $result = $db->query(
                 'SELECT `parent_id`, `target_id`, `reaction`, `reaction_count`
                     FROM `da_reaction`
                     WHERE `parent_id` = ?
                 ',
                 $parentId
             );
-            if (!$stmt) {
-                throw new Exception('테이블이 생성되어있지 않습니다.');
-            }
-            $result = $stmt->fetchAll();
+            $result = $result->fetchAll() ?: [];
         } catch (\Exception $e) {
             if (Session::isAdmin()) {
                 throw new DaException("관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
@@ -190,9 +184,11 @@ class ReactionModel extends ModuleBase
             if ($memberSrl && $memberActions) {
                 $reactionData['choose'] = in_array($reactionData['reaction'], $memberActions[$row->target_id] ?? []);
             }
+            $reactions[$row->target_id] ??= [];
             $reactions[$row->target_id][] = $reactionData;
         }
 
+        // @phpstan-ignore return.type
         return $reactions;
     }
 
@@ -206,6 +202,7 @@ class ReactionModel extends ModuleBase
      *
      * @throws CannotReactToOwnTargetException
      * @throws ReactionLimitExceededException
+     * @throws MustLogin
      */
     public static function reactable(ReactionConfig $config, SessionHelper $member, string $targetId, string $reaction): int
     {

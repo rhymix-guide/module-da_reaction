@@ -13,6 +13,7 @@ use Rhymix\Framework\Helpers\SessionHelper;
  * 리액션 모듈의 설정
  *
  * @property bool $enable
+ * @property bool $ignore_part_config
  * @property int $reaction_limit 리액션 제한 수
  * @property bool $reaction_self 자신의 글, 댓글에 리액션 제한
  * @property string $reaction_allows
@@ -24,7 +25,15 @@ class ReactionConfig
     protected string $configKey = 'da_reaction';
 
     /**
-     * @var object
+     * @var object{
+     *     enable: bool,
+     *     ignore_part_config: bool,
+     *     reaction_limit: int,
+     *     reaction_self: bool,
+     *     reaction_allows: string,
+     *     document_insert_position: string,
+     *     comment_insert_position: string,
+     * }&\stdClass
      */
     protected object $config;
 
@@ -69,6 +78,7 @@ class ReactionConfig
             $moduleConfig = new \stdClass();
         }
 
+        // @phpstan-ignore assign.propertyType
         $this->config = (object) array_merge($this->defaultConfig, (array) $moduleConfig);
     }
 
@@ -127,6 +137,7 @@ class ReactionConfig
         $vars['reaction_allows'] = implode(',', $vars['reaction_allows'] ?? []);
         $vars = array_merge((array) $this->config, $vars);
 
+        // @phpstan-ignore assign.propertyType
         $this->config = (object) $this->sanitize($vars);
     }
 
@@ -135,6 +146,7 @@ class ReactionConfig
      */
     public function save(): \BaseObject
     {
+        // @phpstan-ignore assign.propertyType
         $this->config = (object) $this->sanitize(array_merge($this->defaultConfig, (array) $this->config));
 
         $oModuleController = ModuleController::getInstance();
@@ -192,6 +204,17 @@ class ReactionConfig
         }, []);
     }
 
+    /**
+     * @return object{
+     *     enable: bool,
+     *     ignore_part_config: bool,
+     *     reaction_limit: int,
+     *     reaction_self: bool,
+     *     reaction_allows: string,
+     *     document_insert_position: string,
+     *     comment_insert_position: string,
+     * }&\stdClass
+     */
     public function gets(): object
     {
         return $this->config;

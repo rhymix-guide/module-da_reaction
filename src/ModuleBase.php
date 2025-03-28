@@ -7,24 +7,31 @@ use Rhymix\Modules\Da_reaction\Src\Models\ReactionConfig;
 use Rhymix\Modules\Da_reaction\Src\Models\ReactionPartConfig;
 
 /**
- * 모듈의 액션을 처리하는 클래스
+ * 라이믹스 리액션 모듈
  *
- * `conf/module.xml` 파일에서 `<actions>` 정의된 `class="Src\ModuleBase"` 속성이 이 클래스를 가리키고 있습니다.
- * `<classes>` 정의에서도 이 클래스를 가리키고 있으므로 이 클래스는 라이믹스 모듈의 기본 클래스로 사용됩니다.
- * 기본 클래스는 `\ModuleObject` 클래스를 상속해야 합니다.
+ * @copyright 2025 kkigomi
+ * @license gnu-gpl-v2-or-later
+ * @link https://github.com/damoang-users/rx-da_reaction
  */
 class ModuleBase extends \ModuleObject
 {
+    /** 리액션 할 수 없음 */
     public const NOT_REACTABLE = 0;
+    /** 리액션 추가 가능 */
     public const REACTABLE_ADD = 1;
+    /** 리액션 취소 가능 */
     public const REACTABLE_REVOKE = 2;
+    /** 리액션 추가 및 취소 가능 */
     public const REACTABLE = 3;
 
+    /** reaction 데이터 테이블 */
     public static string $tableReaction = 'da_reaction';
+    /** 회원의 리액션 이력 테이블 */
     public static string $tableReactionChoose = 'da_reaction_choose';
 
     /** @var ReactionConfig */
     protected static ReactionConfig $config;
+
     /** @var array<int,ReactionPartConfig> */
     protected static array $partConfigInstances = [];
 
@@ -51,6 +58,9 @@ class ModuleBase extends \ModuleObject
         return $customData;
     }
 
+    /**
+     * 모듈의 설정 반환
+     */
     public static function getConfig(): ReactionConfig
     {
         if (!isset(static::$config)) {
@@ -60,6 +70,9 @@ class ModuleBase extends \ModuleObject
         return static::$config;
     }
 
+    /**
+     * 게시판별 리액션 모듈 설정 반환
+     */
     public static function getPartConfig(int $moduleSrl): ReactionPartConfig
     {
         if (!isset(static::$partConfigInstances[$moduleSrl])) {

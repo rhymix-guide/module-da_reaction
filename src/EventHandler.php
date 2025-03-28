@@ -15,7 +15,7 @@ use TemplateHandler;
 class EventHandler extends ModuleBase
 {
     /**
-     * @param object $object
+     * @param \ModuleObject $object
      */
     public function listenerAfterModuleHandlerProc($object): void
     {
@@ -271,7 +271,8 @@ class EventHandler extends ModuleBase
             // 댓글 이동
             $table = ModuleBase::$tableReaction;
             $result = $db->query("SELECT * FROM `{$table}` WHERE `parent_id` = ?", [$originTargetId]);
-            $result = $result->fetchAll();
+            $result = $result->fetchAll() ?: [];
+
             foreach ($result as $row) {
                 $targetInfo = ReactionHelper::parseTargetId($row->target_id);
                 $originTargetId = ReactionHelper::generateIdByComment($originModuleSrl, $targetInfo['comment_srl'], null);
@@ -311,18 +312,23 @@ class EventHandler extends ModuleBase
     /**
      * 댓글을 삭제할 때 리액션 데이터 삭제
      *
-     * @param \CommentItem|\BaseObject|\stdClass $args
+     * @param \CommentItem|BaseObject|\stdClass $args
      *
      * @see \CommentController::deleteComment()
      * @see \CommentController::deleteComments()
      * @see \CommentController::updateCommentByDelete()
      */
-    public function listenerAfterCommentDeleteComment(object $args): BaseObject
+    public function listenerAfterCommentDeleteComment($args): BaseObject
     {
         $output = new BaseObject();
 
-        $moduleSrl = $args->module_srl ?? $args->get('module_srl');
-        $commentSrl = $args->comment_srl ?? $args->get('comment_srl');
+        if ($args instanceof BaseObject) {
+            $moduleSrl = $args->get('module_srl');
+            $commentSrl = $args->get('comment_srl');
+        } else {
+            $moduleSrl = $args->module_srl;
+            $commentSrl = $args->comment_srl;
+        }
 
         $commentTargetId = ReactionHelper::generateIdByComment($moduleSrl, $commentSrl, null);
 

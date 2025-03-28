@@ -9,6 +9,7 @@ use ModuleModel;
 /**
  * 리액션 모듈의 개별 인스턴스 설정
  *
+ * @inheritDoc
  * @property bool $ignore_part_config
  */
 class ReactionPartConfig extends ReactionConfig
@@ -22,11 +23,12 @@ class ReactionPartConfig extends ReactionConfig
         $this->moduleSrl = $moduleSrl;
         $this->moduleConfig = $moduleConfig;
 
-        $config = ModuleModel::getModulePartConfig($this->configKey, $this->moduleSrl);
-        if ($config === null || !is_object($config)) {
+        $config = ModuleModel::getModulePartConfig($this->configKey, $this->moduleSrl) ?? new \stdClass();
+        if (!is_object($config)) {
             $config = new \stdClass();
         }
 
+        /** @var \stdClass $config */
         $this->config = $this->moduleConfig->gets();
         $this->config->ignore_part_config = $config->ignore_part_config;
 
@@ -35,6 +37,7 @@ class ReactionPartConfig extends ReactionConfig
                 $config->enable = false;
             }
 
+            // @phpstan-ignore assign.propertyType
             $this->config = (object) array_merge((array) $this->config, (array) $config);
         }
     }
@@ -49,6 +52,7 @@ class ReactionPartConfig extends ReactionConfig
      */
     public function save(): \BaseObject
     {
+        // @phpstan-ignore assign.propertyType
         $this->config = (object) $this->sanitize((array) $this->config);
 
         $oModuleController = ModuleController::getInstance();

@@ -7,6 +7,15 @@ use FileHandler;
 use ModuleHandler;
 use Rhymix\Framework\URL;
 
+/**
+ * @template TReactionItem of array{
+ *     reaction: string,
+ *     type: string,
+ *     id: string,
+ *     count: int,
+ *     choose: bool,
+ * }
+ */
 class ReactionHelper
 {
     public static function generateIdByDocument(int $moduleSrl, int $documentSrl): ?string
@@ -72,12 +81,14 @@ class ReactionHelper
     {
         $modulePath = ModuleHandler::getModulePath('da_reaction');
 
+        $files = glob(FileHandler::getRealPath("{$modulePath}public/emoticon-images/*")) ?: [];
+
         $imageList = array_reduce(
-            glob(FileHandler::getRealPath("{$modulePath}public/emoticon-images/*")),
+            $files,
             function ($carry, $file) {
                 $fileinfo = pathinfo($file);
                 $validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-                if (in_array(strtolower($fileinfo['extension']), $validExtensions)) {
+                if (in_array(strtolower($fileinfo['extension'] ?? ''), $validExtensions)) {
                     $filename = preg_replace('/[^a-zA-Z0-9_-]/', '', $fileinfo['filename']);
                     $filename = strtolower($filename);
                     $carry[] = [
@@ -94,29 +105,26 @@ class ReactionHelper
     }
 
     /**
-     * @return array{
-     *     reaction: string,
-     *     type: string,
-     *     id: string,
-     *     count: int,
-     *     choose: bool,
-     * }
+     * @return TReactionItem
      */
     public static function parseReaction(string $reaction, int $count = 0): array
     {
-        $result = [];
         $parts = explode(':', $reaction, 2);
-        $result['reaction'] = $reaction;
-        $result['type'] = $parts[0];
-        $result['id'] = $parts[1];
-        $result['count'] = $count;
-        $result['choose'] = false;
+
+        /** @var TReactionItem $result */
+        $result = [
+            'reaction' => $reaction,
+            'type' => $parts[0] ?: '',
+            'id' => $parts[1] ?: '',
+            'count' => $count,
+            'choose' => false,
+        ];
 
         return $result;
     }
 
     /**
-     * @return array<string,mixed>
+     * @return mixed[]
      */
     public static function parseTargetId(string $target): array
     {
