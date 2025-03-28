@@ -2,20 +2,20 @@
 
 namespace Rhymix\Modules\Da_reaction\Src\Exceptions;
 
-class ReactionLimitExceededException extends \Rhymix\Framework\Exception
+class ReactionLimitExceededException extends DaException
 {
-    protected int $limit;
+    protected int $reactionLimit;
 
-    public function __construct(int $limit, string $message = '', \Throwable $previous = null)
+    public function __construct(int $reactionLimit, string $message = '', \Throwable $previous = null)
     {
-        $this->limit = $limit;
-        $message = $message ?: "리액션은 최대 {$limit}개까지 가능합니다.";
+        $this->reactionLimit = $reactionLimit;
+        $message = $message ?: "리액션은 최대 {$reactionLimit}개까지 가능합니다.";
 
-        parent::__construct($message, -1, $previous);
+        parent::__construct($message, $previous);
     }
 
     public function getLimit(): int
     {
-        return $this->limit;
+        return $this->reactionLimit;
     }
 }

@@ -5,10 +5,10 @@ namespace Rhymix\Modules\Da_reaction\Src\Controllers;
 
 use CommentModel;
 use DocumentModel;
-use Rhymix\Framework\Exception;
 use Rhymix\Framework\Exceptions\MustLogin;
 use Rhymix\Framework\Helpers\SessionHelper;
 use Rhymix\Modules\Da_reaction\Src\Exceptions\CannotReactToOwnTargetException;
+use Rhymix\Modules\Da_reaction\Src\Exceptions\DaException;
 use Rhymix\Modules\Da_reaction\Src\Exceptions\ReactionLimitExceededException;
 use Rhymix\Modules\Da_reaction\Src\Models\ReactionConfig;
 use Rhymix\Modules\Da_reaction\Src\Models\ReactionModel;
@@ -41,7 +41,7 @@ class ReactionController extends ModuleBase
         $reactable = ReactionModel::reactable($config, $member, $targetId, $reaction);
 
         if ($reactable === ModuleBase::NOT_REACTABLE) {
-            throw new Exception('리액션을 추가할 수 없습니다.');
+            throw new DaException('리액션을 추가할 수 없습니다.');
         }
 
         if (
@@ -56,8 +56,8 @@ class ReactionController extends ModuleBase
                 if (!$member->isAdmin()) {
                     $config->reactable($member);
                 }
-            } catch (Exception $e) {
-                throw new Exception("리액션 할 수 없습니다. ({$e->getmessage()})", 0, $e);
+            } catch (DaException $e) {
+                throw new DaException("리액션 할 수 없습니다. ({$e->getmessage()})", $e);
             }
 
             if (!$member->isAdmin() && !$config->reaction_self) {

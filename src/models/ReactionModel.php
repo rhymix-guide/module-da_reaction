@@ -9,7 +9,9 @@ use Rhymix\Framework\DB;
 use Rhymix\Framework\Exception;
 use Rhymix\Framework\Exceptions\MustLogin;
 use Rhymix\Framework\Helpers\SessionHelper;
+use Rhymix\Framework\Session;
 use Rhymix\Modules\Da_reaction\Src\Exceptions\CannotReactToOwnTargetException;
+use Rhymix\Modules\Da_reaction\Src\Exceptions\DaException;
 use Rhymix\Modules\Da_reaction\Src\Exceptions\ReactionLimitExceededException;
 use Rhymix\Modules\Da_reaction\Src\ModuleBase;
 use Rhymix\Modules\Da_reaction\Src\ReactionHelper;
@@ -48,10 +50,13 @@ class ReactionModel extends ModuleBase
                 $targetId,
             );
             if (!$stmt) {
-                throw new Exception('테이블이 생성되어있지 않습니다.');
+                throw new DaException('테이블이 생성되어있지 않습니다.');
             }
             $result = $stmt->fetchAll();
         } catch (\Exception $e) {
+            if (Session::isAdmin()) {
+                throw new DaException("getLogs관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
+            }
             return [];
         }
 
@@ -87,6 +92,9 @@ class ReactionModel extends ModuleBase
             }
             $result = $stmt->fetchAll();
         } catch (\Exception $e) {
+            if (Session::isAdmin()) {
+                throw new DaException("getLogsByParentId관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
+            }
             return [];
         }
 
@@ -123,6 +131,9 @@ class ReactionModel extends ModuleBase
             }
             $result = $stmt->fetchAll();
         } catch (\Exception $e) {
+            if (Session::isAdmin()) {
+                throw new DaException("getReactions관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
+            }
             return [];
         }
 
@@ -163,7 +174,10 @@ class ReactionModel extends ModuleBase
             }
             $result = $stmt->fetchAll();
         } catch (\Exception $e) {
-            return [];
+            if (Session::isAdmin()) {
+                throw new DaException("관리페이지에서 모듈이 설치되어있는지 확인하세요. {$e->getMessage()}");
+            }
+            return $reactions;
         }
 
         $memberActions = [];

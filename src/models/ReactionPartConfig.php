@@ -5,7 +5,6 @@ namespace Rhymix\Modules\Da_reaction\Src\Models;
 
 use ModuleController;
 use ModuleModel;
-use Rhymix\Framework\Exception;
 
 /**
  * 리액션 모듈의 개별 인스턴스 설정

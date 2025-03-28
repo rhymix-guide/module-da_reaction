@@ -2,12 +2,12 @@
 
 namespace Rhymix\Modules\Da_reaction\Src\Exceptions;
 
-class CannotReactToOwnTargetException extends \Rhymix\Framework\Exception
+class CannotReactToOwnTargetException extends DaException
 {
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+    public function __construct(string $message = '', \Throwable $previous = null)
     {
         $message = $message ?: '리액션 할 수 없습니다.';
 
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, $previous);
     }
 }
