@@ -38,7 +38,7 @@ class ReactionController extends ModuleBase
         $targetInfo = ReactionHelper::parseTargetId($targetId);
 
         // 리액션 제한 확인
-        $reactable = ReactionModel::reactable($config, $member, $targetId, $reaction);
+        $reactable = ReactionModel::reactable($config, $member, $reactionMode, $targetId, $reaction);
 
         if ($reactable === ModuleBase::NOT_REACTABLE) {
             throw new DaException('리액션을 추가할 수 없습니다.');

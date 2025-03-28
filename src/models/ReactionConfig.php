@@ -104,9 +104,11 @@ class ReactionConfig
             return true;
         }
 
-        $groups = array_keys($member->getGroups());
-        if (!count(array_intersect($groups, $this->getAllowGroups()))) {
-            throw new NotPermitted();
+        if (!empty($this->getAllowGroups())) {
+            $groups = array_keys($member->getGroups());
+            if (!count(array_intersect($groups, $this->getAllowGroups()))) {
+                throw new NotPermitted();
+            }
         }
 
         return true;

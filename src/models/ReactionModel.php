@@ -204,7 +204,7 @@ class ReactionModel extends ModuleBase
      * @throws ReactionLimitExceededException
      * @throws MustLogin
      */
-    public static function reactable(ReactionConfig $config, SessionHelper $member, string $targetId, string $reaction): int
+    public static function reactable(ReactionConfig $config, SessionHelper $member, string $reactionMode, string $targetId, string $reaction): int
     {
         $reactable = ModuleBase::NOT_REACTABLE;
 
@@ -246,6 +246,11 @@ class ReactionModel extends ModuleBase
         } else if ($reactionRows < $reactionLimit) {
             $reactable |= ModuleBase::REACTABLE_ADD;
         } else if ($member->isAdmin()) {
+            $reactable |= ModuleBase::REACTABLE_ADD;
+        }
+
+        // 토글 모드일 때 다른 리액션에 추가 가능
+        if ($reactionMode === 'toggle') {
             $reactable |= ModuleBase::REACTABLE_ADD;
         }
 
