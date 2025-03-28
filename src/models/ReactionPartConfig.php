@@ -30,7 +30,7 @@ class ReactionPartConfig extends ReactionConfig
 
         /** @var \stdClass $config */
         $this->config = $this->moduleConfig->gets();
-        $this->config->ignore_part_config = $config->ignore_part_config;
+        $this->config->ignore_part_config = $config->ignore_part_config ?? false;
 
         if (!$this->config->ignore_part_config) {
             if (!$this->config->enable) {
