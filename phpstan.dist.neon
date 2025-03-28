@@ -1,10 +1,31 @@
+includes:
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
 parameters:
-	level: 6
+	level: 7
 	phpVersion:
 		min: 70400
 		max: 80499
+	tips:
+		treatPhpDocTypesAsCertain: false
 	paths:
 		- ./src/
+		- ./views
 	bootstrapFiles:
-		- ../../common/autoload.php
 		- phpstan-bootstrap.php
+	scanDirectories:
+		- ../../common
+		- ../../classes
+		- ../../modules
+	dynamicConstantNames:
+		- RX_BASEURL
+	disallowedFunctionCalls:
+		-
+			function: 'dp()'  # `method` is an alias of `function`
+		-
+			function: 'dump()'  # `method` is an alias of `function`
+		-
+			function: 'dd()'  # `method` is an alias of `function`
+		-
+			function: 'debugPrint()'  # `method` is an alias of `function`

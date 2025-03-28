@@ -44,4 +44,4 @@ jobs:
       - name: PHPStan
         run: |
           composer install
-          composer run phpstan -- --configuration=phpstan.ci.neon
+          composer run phpstan-ci

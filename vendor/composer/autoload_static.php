@@ -43,6 +43,7 @@ class ComposerStaticInitad57b0d53afa63965e86a0513b3ff915
         'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\RequestHandler' => __DIR__ . '/../..' . '/src/controllers/RequestHandler.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\EventHandler' => __DIR__ . '/../..' . '/src/EventHandler.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\CannotReactToOwnTargetException' => __DIR__ . '/../..' . '/src/exceptions/CannotReactToOwnTargetException.php',
+        'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\DaException' => __DIR__ . '/../..' . '/src/exceptions/DaException.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionIdTooLongException' => __DIR__ . '/../..' . '/src/exceptions/ReactionIdTooLongException.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionLimitExceededException' => __DIR__ . '/../..' . '/src/exceptions/ReactionLimitExceededException.php',
         'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\TargetIdTooLongException' => __DIR__ . '/../..' . '/src/exceptions/TargetIdTooLongException.php',

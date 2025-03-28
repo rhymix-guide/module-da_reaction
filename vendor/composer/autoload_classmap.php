@@ -13,6 +13,7 @@ return array(
     'Rhymix\\Modules\\Da_reaction\\Src\\Controllers\\RequestHandler' => $baseDir . '/src/controllers/RequestHandler.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\EventHandler' => $baseDir . '/src/EventHandler.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\CannotReactToOwnTargetException' => $baseDir . '/src/exceptions/CannotReactToOwnTargetException.php',
+    'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\DaException' => $baseDir . '/src/exceptions/DaException.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionIdTooLongException' => $baseDir . '/src/exceptions/ReactionIdTooLongException.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\ReactionLimitExceededException' => $baseDir . '/src/exceptions/ReactionLimitExceededException.php',
     'Rhymix\\Modules\\Da_reaction\\Src\\Exceptions\\TargetIdTooLongException' => $baseDir . '/src/exceptions/TargetIdTooLongException.php',
