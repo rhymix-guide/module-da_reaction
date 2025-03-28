@@ -6,7 +6,7 @@ class DaException extends \Rhymix\Framework\Exception
 {
     protected ?string $langCode;
 
-    public function __construct(string $message = '', \Throwable $previous = null)
+    public function __construct(string $message = '', ?\Throwable $previous = null)
     {
         if (!$message && $this->langCode) {
             $message = lang($this->langCode);
