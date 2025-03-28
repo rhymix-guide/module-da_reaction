@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/damoang-users/rx-da_reaction/compare/v1.1.1...v1.2.0) (2025-03-28)
+
+### Features
+
+* [#21](https://github.com/damoang-users/rx-da_reaction/issues/21) 글을 삭제할 때 리액션 데이터 삭제 ([f77037d](https://github.com/damoang-users/rx-da_reaction/commit/f77037d1b425f8cceec07eec13a4979be3a4b428))
+* [#21](https://github.com/damoang-users/rx-da_reaction/issues/21) 글을 이동할 때 리액션 데이터 처리 ([f67635a](https://github.com/damoang-users/rx-da_reaction/commit/f67635ae3a81c6209cc070c0eee259f77e8b59e5))
+* [#21](https://github.com/damoang-users/rx-da_reaction/issues/21) 댓글을 삭제할 때 리액션 데이터 삭제 ([83daaba](https://github.com/damoang-users/rx-da_reaction/commit/83daaba7e90f14f95fdbfd8c0c9ca576230356fd))
+* Fetch 응답에서 라이믹스 디버그 패널 및 PHPDebugbar 지원 ([459b9e3](https://github.com/damoang-users/rx-da_reaction/commit/459b9e3d7df4a517ab2f57587de1f955ef3925ad))
+
+### Bug Fixes
+
+* [#21](https://github.com/damoang-users/rx-da_reaction/issues/21) 댓글 삭제 시 리스너의 객체 타입 문제 고침 ([2ef64be](https://github.com/damoang-users/rx-da_reaction/commit/2ef64bea07b71836f66dcbfda24a7380ee454d0d))
+* [#32](https://github.com/damoang-users/rx-da_reaction/issues/32) countable 문제 수정 ([c761462](https://github.com/damoang-users/rx-da_reaction/commit/c761462cd02ff2d8ed7c25937c9cea48f782a258))
+* 댓글의 targetId를 생성할 때 문서 번호가 없을 때 잘못된 포맷으로 생성되는 문제 고침 ([2cb67e7](https://github.com/damoang-users/rx-da_reaction/commit/2cb67e7ac10133dc5511534a1281ee029e134b49))
+* 리액션 횟수 제한이 잘못 적용되는 문제 수정 ([60151d6](https://github.com/damoang-users/rx-da_reaction/commit/60151d6ea280fe68951054e09e808ad6b0a660f6))
+
 ## [1.1.1](https://github.com/damoang-users/rx-da_reaction/compare/v1.1.0...v1.1.1) (2025-03-16)
 
 ### Features

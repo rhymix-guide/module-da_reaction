@@ -5,9 +5,9 @@
     <!-- 표시될 모듈 설명 -->
     <description xml:lang="ko">글, 댓글에 반응 남기기</description>
     <!-- 모듈 버전 -->
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <!-- 모듈 배포 날짜 -->
-    <date>2025-03-16</date>
+    <date>2025-03-29</date>
 
     <!-- 제작자 정보 -->
     <author email_address="kkigomi@gmail.com" link="https://github.com/kkigomi">
