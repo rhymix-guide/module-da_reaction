@@ -21,7 +21,6 @@ export default mergeConfig(settings, defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     siteTitle: 'DA Reaction',
-    logo: 'https://github.com/damoang-users.png',
     outline: [2, 4],
     nav: [
       { text: 'Home', link: '/' },
@@ -52,7 +51,7 @@ export default mergeConfig(settings, defineConfig({
     externalLinkIcon: true,
 
     editLink: {
-      pattern: 'https://github.com/damoang-users/rx-da_reaction/edit/main/docs/:path',
+      pattern: 'https://github.com/rhymix-guide/module-da_reaction/edit/main/docs/:path',
       text: '이 페이지 수정하기'
     },
 
@@ -76,12 +75,8 @@ export default mergeConfig(settings, defineConfig({
 
     // 소셜 링크
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/damoang-users/rx-da_reaction' },
+      { icon: 'github', link: 'https://github.com/rhymix-guide/module-da_reaction' },
     ],
-
-    footer: {
-      message: '이 기능은 <a href="https://damoang.net/" target="_blank">다모앙</a> 커뮤니티에서 GNU GPL v3 라이선스로 제공합니다.',
-    },
   },
 
   markdown: {
@@ -91,6 +86,6 @@ export default mergeConfig(settings, defineConfig({
   },
 
   sitemap: {
-    hostname: 'https://damoang-users.github.io/rx-da_reaction/',
+    hostname: 'https://rhymix-guide.github.io/module-da_reaction/',
   },
 }))

@@ -75,5 +75,5 @@ jobs:
       - name: IndexNow Action
         uses: bojieyang/indexnow-action@v2
         with:
-          sitemap-location: 'https://damoang-users.github.io/rx-da_reaction/sitemap.xml'
+          sitemap-location: 'https://rhymix-guide.github.io/module-da_reaction/sitemap.xml'
           key: ${{ secrets.INDEXNOW_KEY }}
