@@ -17,7 +17,7 @@ export default mergeConfig(settings, defineConfig({
   title: "라이믹스 리액션 모듈",
   description: "라이믹스 리액션 모듈",
   titleTemplate: ':title - RX:DA Reaction',
-  base: '/rx-da_reaction',
+  base: '/module-da_reaction',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     siteTitle: 'DA Reaction',
